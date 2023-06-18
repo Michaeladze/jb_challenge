@@ -13,21 +13,27 @@ interface IProps {
 }
 
 export interface ITOCContext {
+  table: IContents;
   elements: IPageContent[];
-  visibleElements: Record<number, boolean>;
-  setVisibleElements: Dispatch<SetStateAction<Record<number, boolean>>>;
-  filteredElements: IPageContent[];
-  setFilteredElements: Dispatch<SetStateAction<IPageContent[]>>;
+  visibleElements: Record<string, boolean>;
+  setVisibleElements: Dispatch<SetStateAction<Record<string, boolean>>>;
+  filteredMap: Record<string, boolean>;
+  setFilteredMap: Dispatch<SetStateAction<Record<string, boolean>>>;
+  query: string;
+  setQuery: Dispatch<SetStateAction<string>>;
   activeElement: IPageContent | null;
   setActiveElement: Dispatch<SetStateAction<IPageContent | null>>;
 }
 
 export const TOCContext = createContext<ITOCContext>({
+  table: {} as IContents,
   elements: [],
   visibleElements: {},
   setVisibleElements: () => {},
-  filteredElements: [],
-  setFilteredElements: () => {},
+  filteredMap: {},
+  setFilteredMap: () => {},
+  query: '',
+  setQuery: () => {},
   activeElement: null,
   setActiveElement: () => {}
 });
@@ -37,66 +43,66 @@ export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
 
   const elements: IPageContent[] = useMemo(() => buildTable(table), [table]);
 
+  const [query, setQuery] = useState<string>('');
+
   const [activeElement, setActiveElement] = useState<IPageContent | null>(null);
 
   useEffect(() => {
     setActiveElement(() => {
-      return elements.find((element: IPageContent) => element.url === page);
+      return elements.find((element: IPageContent) => page && element.url === page);
     });
   }, [page]);
 
-  const [visibleElements, setVisibleElements] = useState<Record<number, boolean>>(() => {
-    const defaultVisibleElements = table.topLevelIds.reduce((acc: Record<string, boolean>, id: string) => {
+  const [visibleElements, setVisibleElements] = useState<Record<string, boolean>>(() => {
+    return table.topLevelIds.reduce((acc: Record<string, boolean>, id: string) => {
       acc[id] = true;
-      return acc;
-    }, {});
-
-    return elements.reduce((acc: Record<number, boolean>, element: IPageContent, index: number) => {
-      acc[index] = element.id in defaultVisibleElements;
       return acc;
     }, {});
   });
 
-  const [filteredElements, setFilteredElements] = useState<IPageContent[]>([]);
+  const [filteredMap, setFilteredMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    setFilteredElements(() => {
-      return elements.filter((_: IPageContent, index: number) => visibleElements[index]);
+    const next: Record<string, boolean> = {};
+
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].title.toLowerCase().includes(query.toLowerCase())) {
+        next[elements[i].id] = true;
+
+        let parentId = elements[i].parentId;
+
+        while (parentId !== undefined) {
+          next[parentId] = true;
+          parentId = table.entities.pages[parentId] ? table.entities.pages[parentId].parentId : undefined;
+        }
+      }
+    }
+
+    setFilteredMap(next);
+    setVisibleElements((visibleElements) => {
+      if (query === '') {
+        return visibleElements;
+      }
+
+      return {
+        ...visibleElements,
+        ...next
+      };
     });
-  }, [elements, visibleElements]);
+  }, [elements, table, query]);
 
   const context: ITOCContext = {
+    table,
     elements,
     visibleElements,
     setVisibleElements,
-    filteredElements,
-    setFilteredElements,
+    filteredMap,
+    setFilteredMap,
+    query,
+    setQuery,
     activeElement,
     setActiveElement
   };
-
-  // const onSearch = useCallback((query: string) => {
-  //   const mapOfPresentElements: Record<string, boolean> = {};
-  //
-  //   elements.forEach((element: IPageContent) => {
-  //     if (element.title.toLowerCase().includes(query.toLowerCase())) {
-  //       mapOfPresentElements[element.id] = true;
-  //
-  //       let parentId = element.parentId;
-  //
-  //       while (parentId !== 'ij') {
-  //         mapOfPresentElements[parentId] = true;
-  //         parentId = table.entities.pages[parentId].parentId;
-  //       }
-  //     }
-  //   });
-  //
-  //   const filteredElements: IPageContent[] = elements.filter((element: IPageContent) => {
-  //     return mapOfPresentElements[element.id];
-  //   });
-  //
-  //   setFilteredElements(filteredElements);
-  // }, []);
 
   // -------------------------------------------------------------------------------------------------------------------
 
