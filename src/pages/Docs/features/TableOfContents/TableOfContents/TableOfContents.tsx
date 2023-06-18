@@ -6,6 +6,7 @@ import './TableOfContents.css';
 import { SearchBar } from '../SearchBar';
 import { Table } from '../Table';
 import { buildTable } from '../buildTable.ts';
+import { useParams } from 'react-router-dom';
 
 interface IProps {
   table: IContents;
@@ -17,6 +18,8 @@ export interface ITOCContext {
   setVisibleElements: Dispatch<SetStateAction<Record<number, boolean>>>;
   filteredElements: IPageContent[];
   setFilteredElements: Dispatch<SetStateAction<IPageContent[]>>;
+  activeElement: IPageContent | null;
+  setActiveElement: Dispatch<SetStateAction<IPageContent | null>>;
 }
 
 export const TOCContext = createContext<ITOCContext>({
@@ -25,11 +28,22 @@ export const TOCContext = createContext<ITOCContext>({
   setVisibleElements: () => {},
   filteredElements: [],
   setFilteredElements: () => {},
+  activeElement: null,
+  setActiveElement: () => {}
 });
 
 export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
+  const { page } = useParams<{page: string}>();
 
   const elements: IPageContent[] = useMemo(() => buildTable(table), [table]);
+
+  const [activeElement, setActiveElement] = useState<IPageContent | null>(null);
+
+  useEffect(() => {
+    setActiveElement(() => {
+      return elements.find((element: IPageContent) => element.url === page);
+    });
+  }, [page]);
 
   const [visibleElements, setVisibleElements] = useState<Record<number, boolean>>(() => {
     const defaultVisibleElements = table.topLevelIds.reduce((acc: Record<string, boolean>, id: string) => {
@@ -56,7 +70,9 @@ export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
     visibleElements,
     setVisibleElements,
     filteredElements,
-    setFilteredElements
+    setFilteredElements,
+    activeElement,
+    setActiveElement
   };
 
   // const onSearch = useCallback((query: string) => {

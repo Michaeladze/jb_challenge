@@ -1,17 +1,15 @@
 import React from 'react';
-import './SearchBar.css';
-import { Input } from '../../../components/Input';
+import './Content.css';
 
 
-export const SearchBar: React.FC = () => {
-
+export const Content: React.FC = () => {
 
   // -------------------------------------------------------------------------------------------------------------------
 
 
   return (
-    <>
-      <Input/>
-    </>
+    <div className='docs__content'>
+      <h1 className='title-28'> Page Content </h1>
+    </div>
   );
 };

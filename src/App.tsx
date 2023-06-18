@@ -1,25 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
-import Axios, { AxiosResponse } from 'axios';
-import { TableOfContents } from './features/TableOfContents';
+import { useRoutes } from 'react-router-dom';
+import { routes } from './router';
 
 export const App = () => {
 
-  const [table, setTable] = useState<IContents | null>(null);
-
-  useEffect(() => {
-    const url = 'http://localhost:3000/contents';
-
-    Axios.get(url).then((response: AxiosResponse<IContents>) => {
-      console.log(response.data);
-      setTable(response.data);
-    });
-
-  }, []);
+  const router = useRoutes(routes);
 
   return (
     <div className='app'>
-      { table && <TableOfContents table={table}/> }
+      { router }
     </div>
 
   );
