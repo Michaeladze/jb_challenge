@@ -53,7 +53,23 @@ export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
     return elements.find((element: IPageMeta) => page && element.url === page);
   });
 
-  const [expandMap, setExpandMap] = useState<Record<string, boolean>>({});
+  const [expandMap, setExpandMap] = useState<Record<string, boolean>>(() => {
+    const next: Record<string, boolean> = {};
+
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].url === page) {
+        let parentId = elements[i].parentId;
+
+        while (parentId !== undefined) {
+          next[parentId] = true;
+          parentId = table.entities.pages[parentId] ? table.entities.pages[parentId].parentId : undefined;
+        }
+        break;
+      }
+    }
+
+    return next;
+  });
   const [filterByQuery, setFilterByQuery] = useState<Record<string, boolean>>({});
   const [filterByExpand, setFilterByExpand] = useState<Record<string, boolean>>(() => {
     return table.topLevelIds.reduce((acc, id) => {

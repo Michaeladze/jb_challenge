@@ -11,13 +11,13 @@ export const TableShimmer: React.FC = () => {
 
   return (
     <div className='toc__shimmer'>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
-      <Shimmer height={20} width={200}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
+      <Shimmer height={20} width={280}/>
     </div>
   );
 };
