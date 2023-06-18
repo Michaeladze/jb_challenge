@@ -6,5 +6,7 @@ yarn install
 #### Start the project
 
 ```shell
-yarn dev
+yarn start
 ```
+
+Navigate to `/docs`

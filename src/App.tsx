@@ -4,7 +4,6 @@ import { useRoutes } from 'react-router-dom';
 import { routes } from './router';
 
 export const App = () => {
-
   const router = useRoutes(routes);
 
   return (

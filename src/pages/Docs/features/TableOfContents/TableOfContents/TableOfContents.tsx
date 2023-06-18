@@ -50,11 +50,19 @@ export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
   const [query, setQuery] = useState<string>('');
 
   const [activeElement, setActiveElement] = useState<IPageMeta | null>(() => {
-    return elements.find((element: IPageMeta) => page && element.url === page);
+    if (!page) {
+      return null;
+    }
+
+    return elements.find((element: IPageMeta) => element.url === page);
   });
 
   const [expandMap, setExpandMap] = useState<Record<string, boolean>>(() => {
     const next: Record<string, boolean> = {};
+
+    if (!page) {
+      return next;
+    }
 
     for (let i = 0; i < elements.length; i++) {
       if (elements[i].url === page) {
