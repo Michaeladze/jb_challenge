@@ -1,0 +1,31 @@
+.ui-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ui-status__circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+}
+
+.ui-status__circle.gray {
+    background-color: var(--gray-300);
+}
+
+.ui-status__circle.green {
+    background-color: var(--green);
+}
+
+.ui-status__circle.yellow {
+    background-color: var(--yellow);
+}
+
+.ui-status__circle.red {
+    background-color: var(--red);
+}
+
+.ui-status__circle.blue {
+    background-color: var(--blue);
+}

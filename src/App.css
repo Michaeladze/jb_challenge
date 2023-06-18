@@ -1,0 +1,11 @@
+.app {
+    height: 100%;
+    padding: 24px;
+    color: var(--primary-900);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}

@@ -1,0 +1,23 @@
+.ui-input {
+    height: 32px;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid var(--gray-400);
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 400;
+    padding: 0 16px;
+}
+
+.ui-input::placeholder {
+    color: var(--gray-400);
+}
+
+.ui-input:hover {
+    border-color: var(--primary-400);
+}
+
+.ui-input:active,
+.ui-input:focus {
+    border-color: var(--primary-600);
+}

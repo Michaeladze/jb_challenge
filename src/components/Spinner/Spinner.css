@@ -1,0 +1,52 @@
+.ui-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+}
+
+.ui-spinner.s {
+    width: 16px;
+    height: 16px;
+}
+
+.ui-spinner.m {
+    width: 24px;
+    height: 24px;
+}
+
+.ui-spinner.l {
+    width: 32px;
+    height: 32px;
+}
+
+.ui-spinner__inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+
+    animation: rotation 0.85s infinite linear;
+}
+
+.ui-spinner__inner.primary {
+    border: 2px solid var(--background);
+    border-top-color: var(--primary-500);
+}
+
+.ui-spinner__inner.light {
+    border: 2px solid transparent;
+    border-top-color: var(--white);
+}
+
+
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}

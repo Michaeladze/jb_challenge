@@ -1,0 +1,26 @@
+:root {
+    --background: #f6f6f6;
+
+    --white: #ffffff;
+    --black: #000000;
+
+    --primary-900: #040038;
+    --primary-600: #3658f5;
+    --primary-500: #4665f6;
+    --primary-400: #475ee4;
+
+    --gray-200: #ebebef;
+    --gray-300: #9b99af;
+    --gray-400: #878787;;
+    --gray-500: #5e5e5e;
+
+    --green: #00B294;
+    --yellow: #ffb900;
+    --red: #d13438;
+    --blue: #4665f6;
+
+    --shimmer-base: #f6f7f9;
+    --shimmer-spotlight: #e9ebee;
+
+    --depth: 0 2px 8px rgba(4,0,56,.1);
+}

@@ -1,0 +1,7 @@
+.ui-card {
+    background-color: var(--white);
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: var(--depth);
+    cursor: default;
+}
