@@ -1,11 +1,11 @@
-interface IContents {
+interface ITableOfContents {
     entities: {
-        pages: Record<string, IPageContent>;
+        pages: Record<string, IPageMeta>;
     };
     topLevelIds: string[];
 }
 
-interface IPageContent {
+interface IPageMeta {
     id: string;
     title: string;
     url: string;

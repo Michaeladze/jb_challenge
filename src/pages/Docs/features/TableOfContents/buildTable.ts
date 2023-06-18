@@ -1,8 +1,8 @@
-export const buildTable = (root: IContents): IPageContent[] => {
-  const elements: IPageContent[] = [];
+export const buildTable = (root: ITableOfContents): IPageMeta[] => {
+  const elements: IPageMeta[] = [];
 
   const dfs = (id: string) => {
-    const content: IPageContent = root.entities.pages[id];
+    const content: IPageMeta = root.entities.pages[id];
     elements.push(content);
 
     if (content.pages) {

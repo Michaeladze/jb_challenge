@@ -9,29 +9,33 @@ import { buildTable } from '../buildTable.ts';
 import { useParams } from 'react-router-dom';
 
 interface IProps {
-  table: IContents;
+  table: ITableOfContents;
 }
 
 export interface ITOCContext {
-  table: IContents;
-  elements: IPageContent[];
-  visibleElements: Record<string, boolean>;
-  setVisibleElements: Dispatch<SetStateAction<Record<string, boolean>>>;
-  filteredMap: Record<string, boolean>;
-  setFilteredMap: Dispatch<SetStateAction<Record<string, boolean>>>;
+  table: ITableOfContents;
+  elements: IPageMeta[];
+  expandMap: Record<string, boolean>;
+  setExpandMap: Dispatch<SetStateAction<Record<string, boolean>>>;
+  filterByExpand: Record<string, boolean>;
+  setFilterByExpand: Dispatch<SetStateAction<Record<string, boolean>>>;
+  filterByQuery: Record<string, boolean>;
+  setFilterByQuery: Dispatch<SetStateAction<Record<string, boolean>>>;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  activeElement: IPageContent | null;
-  setActiveElement: Dispatch<SetStateAction<IPageContent | null>>;
+  activeElement: IPageMeta | null;
+  setActiveElement: Dispatch<SetStateAction<IPageMeta | null>>;
 }
 
 export const TOCContext = createContext<ITOCContext>({
-  table: {} as IContents,
+  table: {} as ITableOfContents,
   elements: [],
-  visibleElements: {},
-  setVisibleElements: () => {},
-  filteredMap: {},
-  setFilteredMap: () => {},
+  expandMap: {},
+  setExpandMap: () => {},
+  filterByExpand: {},
+  setFilterByExpand: () => {},
+  filterByQuery: {},
+  setFilterByQuery: () => {},
   query: '',
   setQuery: () => {},
   activeElement: null,
@@ -41,52 +45,66 @@ export const TOCContext = createContext<ITOCContext>({
 export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
   const { page } = useParams<{page: string}>();
 
-  const elements: IPageContent[] = useMemo(() => buildTable(table), [table]);
+  const elements: IPageMeta[] = useMemo(() => buildTable(table), [table]);
 
   const [query, setQuery] = useState<string>('');
 
-  const [activeElement, setActiveElement] = useState<IPageContent | null>(null);
+  const [activeElement, setActiveElement] = useState<IPageMeta | null>(() => {
+    return elements.find((element: IPageMeta) => page && element.url === page);
+  });
 
-  useEffect(() => {
-    setActiveElement(() => {
-      return elements.find((element: IPageContent) => page && element.url === page);
-    });
-  }, [page]);
-
-  const [visibleElements, setVisibleElements] = useState<Record<string, boolean>>(() => {
-    return table.topLevelIds.reduce((acc: Record<string, boolean>, id: string) => {
+  const [expandMap, setExpandMap] = useState<Record<string, boolean>>({});
+  const [filterByQuery, setFilterByQuery] = useState<Record<string, boolean>>({});
+  const [filterByExpand, setFilterByExpand] = useState<Record<string, boolean>>(() => {
+    return table.topLevelIds.reduce((acc, id) => {
       acc[id] = true;
       return acc;
     }, {});
   });
 
-  const [filteredMap, setFilteredMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const next: Record<string, boolean> = {};
+    const filterByQuery: Record<string, boolean> = {};
 
     for (let i = 0; i < elements.length; i++) {
       if (elements[i].title.toLowerCase().includes(query.toLowerCase())) {
-        next[elements[i].id] = true;
+        filterByQuery[elements[i].id] = true;
 
         let parentId = elements[i].parentId;
 
         while (parentId !== undefined) {
-          next[parentId] = true;
+          filterByQuery[parentId] = true;
           parentId = table.entities.pages[parentId] ? table.entities.pages[parentId].parentId : undefined;
         }
       }
     }
 
-    setFilteredMap(next);
-    setVisibleElements((visibleElements) => {
+    setFilterByQuery(filterByQuery);
+    setFilterByExpand((filterByExpand) => {
       if (query === '') {
-        return visibleElements;
+        const next: Record<string, boolean> = { ...filterByExpand };
+
+        for (let i = 0; i < elements.length; i++) {
+          if (expandMap[elements[i].id]) {
+
+            for (let j = i + 1; j < elements.length; j++) {
+              if (elements[j].level <= elements[i].level) {
+                break;
+              } else if (elements[j].level - elements[i].level > 1 && !next[elements[j].id]) {
+                continue;
+              }
+
+              next[elements[j].id] = true;
+            }
+          }
+        }
+
+        return next;
       }
 
       return {
-        ...visibleElements,
-        ...next
+        ...filterByExpand,
+        ...filterByQuery
       };
     });
   }, [elements, table, query]);
@@ -94,10 +112,12 @@ export const TableOfContents: React.FC<IProps> = ({ table }: IProps) => {
   const context: ITOCContext = {
     table,
     elements,
-    visibleElements,
-    setVisibleElements,
-    filteredMap,
-    setFilteredMap,
+    expandMap,
+    setExpandMap,
+    filterByExpand,
+    setFilterByExpand,
+    filterByQuery,
+    setFilterByQuery,
     query,
     setQuery,
     activeElement,
